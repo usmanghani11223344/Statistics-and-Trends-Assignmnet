@@ -16,7 +16,7 @@ import seaborn as sns
 
 
 def plot_relational_plot(df):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 5))
     plt.savefig('relational_plot.png')
     return
 
