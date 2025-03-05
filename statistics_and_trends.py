@@ -27,7 +27,7 @@ def plot_relational_plot(df):
 
 def plot_categorical_plot(df):
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x='TR', y='TL', data=df, ax=ax, estimator=np.mean, ci=None, palette='viridis')
+    sns.barplot(x='TR', y='TL', data=df, ax=ax, estimator=np.mean, errorbar=None, palette='viridis')
     ax.set_title("Average Total Length by Treatment with Data Points")
     ax.set_xlabel("Treatment")
     ax.set_ylabel("Average Total Length")
@@ -46,6 +46,9 @@ def plot_statistical_plot(df):
 
 
 def statistical_analysis(df, col: str):
+    df[col] = pd.to_numeric(df[col], errors='coerce')
+    df.dropna(subset=[col], inplace=True)
+    
     mean = df[col].mean()
     stddev = df[col].std()
     skew = ss.skew(df[col], nan_policy='omit')
