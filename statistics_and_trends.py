@@ -46,10 +46,10 @@ def plot_statistical_plot(df):
 
 
 def statistical_analysis(df, col: str):
-    mean =""
-    stddev =""
-    skew =""
-    excess_kurtosis =""
+    mean = df[col].mean()
+    stddev = df[col].std()
+    skew = ss.skew(df[col], nan_policy='omit')
+    excess_kurtosis =  ss.kurtosis(df[col], nan_policy='omit')
     return mean, stddev, skew, excess_kurtosis
 
 
