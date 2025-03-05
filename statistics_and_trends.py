@@ -38,7 +38,10 @@ def plot_categorical_plot(df):
 
 
 def plot_statistical_plot(df):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(12, 8))
+    corr_matrix = df.corr()
+    sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", ax=ax, linewidths=0.5, vmin=-1, vmax=1)
+    ax.set_title("Enhanced Correlation Heatmap")
     plt.savefig('statistical_plot.png')
     return
 
