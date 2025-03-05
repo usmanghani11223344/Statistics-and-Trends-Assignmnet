@@ -26,7 +26,12 @@ def plot_relational_plot(df):
 
 
 def plot_categorical_plot(df):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.barplot(x='TR', y='TL', data=df, ax=ax, estimator=np.mean, ci=None)
+    ax.set_title("Average Total Length by Treatment")
+    ax.set_xlabel("Treatment")
+    ax.set_ylabel("Average Total Length")
+    plt.xticks(rotation=45)
     plt.savefig('categorical_plot.png')
     return
 
