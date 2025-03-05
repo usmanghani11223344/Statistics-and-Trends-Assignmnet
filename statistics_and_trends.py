@@ -56,6 +56,12 @@ def statistical_analysis(df, col: str):
 def preprocessing(df):
     # You should preprocess your data in this function and
     # make use of quick features such as 'describe', 'head/tail' and 'corr'.
+    if df is None or df.empty:
+        raise ValueError("DataFrame is empty or not loaded correctly.")
+    df.replace('?', pd.NA, inplace=True)
+    for col in df.select_dtypes(include=['object']).columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    df.dropna(inplace=True)
     return df
 
 
