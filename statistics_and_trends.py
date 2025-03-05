@@ -17,6 +17,10 @@ import seaborn as sns
 
 def plot_relational_plot(df):
     fig, ax = plt.subplots(figsize=(10, 5))
+    sns.scatterplot(x='IN', y='TL', data=df, ax=ax, alpha=0.5)
+    ax.set_title("Scatter Plot of Total Length vs Internodes Count")
+    ax.set_xlabel("Number of Internodes")
+    ax.set_ylabel("Total Length")
     plt.savefig('relational_plot.png')
     return
 
@@ -34,10 +38,10 @@ def plot_statistical_plot(df):
 
 
 def statistical_analysis(df, col: str):
-    mean =
-    stddev =
-    skew =
-    excess_kurtosis =
+    mean =""
+    stddev =""
+    skew =""
+    excess_kurtosis =""
     return mean, stddev, skew, excess_kurtosis
 
 
