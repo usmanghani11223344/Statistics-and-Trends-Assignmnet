@@ -27,8 +27,9 @@ def plot_relational_plot(df):
 
 def plot_categorical_plot(df):
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x='TR', y='TL', data=df, ax=ax, estimator=np.mean, ci=None)
-    ax.set_title("Average Total Length by Treatment")
+    sns.barplot(x='TR', y='TL', data=df, ax=ax, estimator=np.mean, ci=None, palette='viridis')
+    sns.stripplot(x='TR', y='TL', data=df, ax=ax, color='black', alpha=0.3, jitter=True)
+    ax.set_title("Average Total Length by Treatment with Data Points")
     ax.set_xlabel("Treatment")
     ax.set_ylabel("Average Total Length")
     plt.xticks(rotation=45)
