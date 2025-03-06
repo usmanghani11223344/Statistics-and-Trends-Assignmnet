@@ -7,90 +7,87 @@ You should NOT change any function, file or variable names,
 Make use of the functions presented in the lectures
 and ensure your code is PEP-8 compliant, including docstrings.
 """
-from corner import corner
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats as ss
 import seaborn as sns
 
-
 def plot_relational_plot(df):
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.scatterplot(x='IN', y='TL', data=df, ax=ax, alpha=0.5)
-    ax.set_title("Scatter Plot of Total Length vs Internodes Count")
-    ax.set_xlabel("Number of Internodes")
-    ax.set_ylabel("Total Length")
+    """Generates a scatter plot showing the relationship between TL and IN."""
+    fig, ax = plt.subplots()
+    sns.scatterplot(data=df, x='IN', y='TL', alpha=0.5, ax=ax)
+    plt.title('Total Length vs. Internodes')
+    plt.xlabel('Number of Internodes')
+    plt.ylabel('Total Length')
     plt.savefig('relational_plot.png')
-    return
-
+    plt.close()
 
 def plot_categorical_plot(df):
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x='TR', y='TL', data=df, ax=ax, estimator=np.mean, errorbar=None, palette='viridis')
-    ax.set_title("Average Total Length by Treatment with Data Points")
-    ax.set_xlabel("Treatment")
-    ax.set_ylabel("Average Total Length")
+    """Generates a categorical plot showing the count of samples per TREE type."""
+    fig, ax = plt.subplots()
+    sns.countplot(data=df, x='TREE', order=df['TREE'].value_counts().index, ax=ax)
+    plt.title('Sample Count by Tree Type')
     plt.xticks(rotation=45)
     plt.savefig('categorical_plot.png')
-    return
-
+    plt.close()
 
 def plot_statistical_plot(df):
-    fig, ax = plt.subplots(figsize=(12, 8))
-    corr_matrix = df.corr()
-    sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", ax=ax, linewidths=0.5, vmin=-1, vmax=1)
-    ax.set_title("Enhanced Correlation Heatmap")
+    """Generates a histogram for the distribution of TL (Total Length)."""
+    fig, ax = plt.subplots()
+    sns.histplot(df['TL'], bins=30, kde=True, ax=ax)
+    plt.title('Distribution of Total Length')
     plt.savefig('statistical_plot.png')
-    return
-
+    plt.close()
 
 def statistical_analysis(df, col: str):
-    df[col] = pd.to_numeric(df[col], errors='coerce')
-    df.dropna(subset=[col], inplace=True)
-    
-    mean = df[col].mean()
-    stddev = df[col].std()
-    skew = ss.skew(df[col], nan_policy='omit')
-    excess_kurtosis =  ss.kurtosis(df[col], nan_policy='omit')
+    """Calculates statistical moments (mean, std, skewness, kurtosis) for a given column."""
+    data = df[col].dropna()
+    mean = np.mean(data)
+    stddev = np.std(data)
+    skew = ss.skew(data)
+    excess_kurtosis = ss.kurtosis(data)
     return mean, stddev, skew, excess_kurtosis
 
-
 def preprocessing(df):
-    # You should preprocess your data in this function and
-    # make use of quick features such as 'describe', 'head/tail' and 'corr'.
-    if df is None or df.empty:
-        raise ValueError("DataFrame is empty or not loaded correctly.")
-    df.replace('?', pd.NA, inplace=True)
-    for col in df.select_dtypes(include=['object']).columns:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-    df.dropna(inplace=True)
+    """Preprocesses the data by handling missing values and converting types."""
+    df.replace("?", np.nan, inplace=True)
+    df['TL'] = pd.to_numeric(df['TL'], errors='coerce')
+    df['IN'] = pd.to_numeric(df['IN'], errors='coerce')
+    df.fillna(df.median(numeric_only=True), inplace=True)
     return df
 
-
 def writing(moments, col):
+    """Displays statistical analysis results."""
     print(f'For the attribute {col}:')
     print(f'Mean = {moments[0]:.2f}, '
           f'Standard Deviation = {moments[1]:.2f}, '
           f'Skewness = {moments[2]:.2f}, and '
           f'Excess Kurtosis = {moments[3]:.2f}.')
-    # Delete the following options as appropriate for your data.
-    # Not skewed and mesokurtic can be defined with asymmetries <-2 or >2.
-    print('The data was right/left/not skewed and platy/meso/leptokurtic.')
-    return
-
+    skew_desc = 'right-skewed' if moments[2] > 0 else 'left-skewed' if moments[2] < 0 else 'not skewed'
+    kurt_desc = 'leptokurtic' if moments[3] > 0 else 'platykurtic' if moments[3] < 0 else 'mesokurtic'
+    print(f'The data was {skew_desc} and {kurt_desc}.')
 
 def main():
-    df = pd.read_csv('data.csv')
+    try:
+        df = pd.read_csv('data.csv')
+    except FileNotFoundError:
+        print("Error: The file 'data.csv' was not found.")
+        return
+    except pd.errors.EmptyDataError:
+        print("Error: The file is empty.")
+        return
+    except pd.errors.ParserError:
+        print("Error: The file could not be parsed.")
+        return
+    
     df = preprocessing(df)
-    col = '<your chosen column for analysis>'
+    col = 'TL'  # Chosen numerical column for analysis
     plot_relational_plot(df)
     plot_statistical_plot(df)
     plot_categorical_plot(df)
     moments = statistical_analysis(df, col)
     writing(moments, col)
-    return
-
-
+    
 if __name__ == '__main__':
     main()
